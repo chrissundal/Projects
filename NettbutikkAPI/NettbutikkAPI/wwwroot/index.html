@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Document</title>
+    <link href="style.css" rel="stylesheet">
+    <link href="Employee/employeestyle.css" rel="stylesheet">
+    <link href="Login/loginStyle.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="Profile/profileStyle.css">
+</head>
+
+<body onload="updateView()">
+
+<div id="app"></div>
+<script>
+    function updateView() {
+        
+        if (Model.app.currentPage == "Store") {
+            updateStoreView();
+        } else if (Model.app.currentPage == "Employee") {
+            updateEmployeeView();
+        } else if (Model.app.currentPage == "Login") {
+            updateLoginView();
+        } else if (Model.app.currentPage == "Profile") {
+            updateProfileView();
+        } else if (Model.app.currentPage == "Register") {
+            registerView()
+        }
+    }
+</script>
+<script src="model.js"></script>
+<script src="Store/storeController.js"></script>
+<script src="Profile/profileController.js"></script>
+<script src="Employee/employeeController.js"></script>
+<script src="Login/loginController.js"></script>
+<script src="Register/registerController.js"></script>
+<script async src="Store/storeView.js"></script>
+<script src="Profile/profileView.js"></script>
+<script src="Employee/employeeView.js"></script>
+<script src="Login/loginView.js"></script>
+<script src="Register/registerView.js"></script>
+</body>
+</html>
