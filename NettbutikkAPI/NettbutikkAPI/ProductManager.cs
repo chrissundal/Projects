@@ -4,7 +4,7 @@ namespace NettbutikkAPI;
 
 public class ProductManager
 {
-    private List<Product> _products;
+    private readonly List<Product> _products;
 
     public ProductManager(string filePath)
     {
@@ -72,9 +72,16 @@ public class ProductManager
         }
     }
 
-    public List<Product> GetProducts() => _products;
+    public List<Product> GetProducts()
+    {
+        return _products;
+    }
 
-    public Product GetProductById(int id) { return _products.FirstOrDefault(p => p.Id == id); }
+    public Product GetProductById(int id)
+    {
+        return _products.FirstOrDefault(p => p.Id == id);
+    }
+
     public void AddProduct(Product newProduct)
     {
         newProduct.SetId(_products.Count);

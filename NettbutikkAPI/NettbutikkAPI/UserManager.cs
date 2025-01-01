@@ -4,7 +4,7 @@ namespace NettbutikkAPI;
 
 public class UserManager
 {
-    private List<Person> _users;
+    private readonly List<Person> _users;
 
     public UserManager(string filePath)
     {
@@ -18,12 +18,15 @@ public class UserManager
             _users =
             [
                 new Person("Chris", "Jacobsen", "c", "1", "Svingen 2", "Larvik", 0, new List<Product>(), true),
-                new Person("Bjarne", "Hansen", "b", "1", "Torget 7", "Sandefjord", 1, new List<Product>(), false),
+                new Person("Bjarne", "Hansen", "b", "1", "Torget 7", "Sandefjord", 1, new List<Product>(), false)
             ];
         }
     }
 
-    public List<Person> GetUsers() => _users;
+    public List<Person> GetUsers()
+    {
+        return _users;
+    }
 
     public Person GetUserById(int id)
     {
@@ -60,6 +63,7 @@ public class UserManager
     {
         return _users.FirstOrDefault(u => u.UserName == username && u.PassWord == password);
     }
+
     private void SaveUsers()
     {
         var updatedJson = JsonSerializer.Serialize(_users);

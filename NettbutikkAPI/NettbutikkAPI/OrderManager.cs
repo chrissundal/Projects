@@ -4,8 +4,9 @@ namespace NettbutikkAPI;
 
 public class OrderManager
 {
-    private List<Order> _orders;
-    private ProductManager _productManager;
+    private readonly List<Order> _orders;
+    private readonly ProductManager _productManager;
+
     public OrderManager(string filePath, ProductManager productManager)
     {
         _productManager = productManager;
@@ -42,13 +43,9 @@ public class OrderManager
     {
         var orderIndex = _orders.FindIndex(order => order.OrderId == updatedOrder.OrderId);
         if (orderIndex >= 0)
-        {
             _orders[orderIndex] = updatedOrder;
-        }
         else
-        {
             _orders.Add(updatedOrder);
-        }
         SaveOrders();
     }
 
@@ -65,11 +62,13 @@ public class OrderManager
                     product.addStock(itemInOrder.Stock);
                     _productManager.UpdateProduct(product.Id, product);
                 }
-            } 
-            _orders.Remove(order); 
+            }
+
+            _orders.Remove(order);
             SaveOrders();
         }
     }
+
     private void SaveOrders()
     {
         var updatedJson = JsonSerializer.Serialize(_orders);

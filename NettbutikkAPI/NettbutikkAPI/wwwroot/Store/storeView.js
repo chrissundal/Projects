@@ -1,4 +1,3 @@
-
 async function updateStoreView() {
     findPriceOfCartItems();
     let checkifEmployee = Model.currentUser.isEmployee ? `<img src="IMG/employee.png" class="addItemsButton" height=50px onclick="goToEmployee()">` : '';
@@ -25,8 +24,8 @@ async function updateStoreView() {
     </footer>
     `;
 }
-function showButtons()
-{
+
+function showButtons() {
     return `
     <div class="categoryButtons">
         <button onclick="sortBy(0)">${Model.app.category[0]}</button>
@@ -40,12 +39,13 @@ function showButtons()
     </div>
     `;
 }
+
 async function sortBy(input) {
     Model.app.html.storeItems = '';
     let response = await axios.get('/products');
     Model.input.productItems = response.data;
     if (input === 7) {
-        for (let i = 0; i < Model.app.category.length -1; i++) {
+        for (let i = 0; i < Model.app.category.length - 1; i++) {
             let categoryItems = Model.input.productItems.filter(item => item.typeOfProduct === Model.app.category[i]);
             if (categoryItems.length == 0) {
                 Model.app.html.storeItems += `
@@ -54,12 +54,12 @@ async function sortBy(input) {
                 <br><div class="borderBottomProduct"></div>
             `;
             }
-            buildProductHtml(categoryItems,input,i);
+            buildProductHtml(categoryItems, input, i);
         }
     } else {
         let sortedProducts = Model.input.productItems.filter(item => item.typeOfProduct === Model.app.category[input]);
         let i = input;
-        buildProductHtml(sortedProducts,input,i);
+        buildProductHtml(sortedProducts, input, i);
     }
     updateView();
 }
@@ -79,15 +79,17 @@ function GetQuantity(itemId, input) {
     `;
     updateView();
 }
-function CloseQuantity(){
+
+function CloseQuantity() {
     Model.app.html.quantity = '';
     Model.input.inputQty = 0;
     updateView();
 }
-function buildProductHtml(sortedProducts, input,i) {
+
+function buildProductHtml(sortedProducts, input, i) {
     if (sortedProducts.length > 0) {
         let html = '';
-        for(let item of sortedProducts) {
+        for (let item of sortedProducts) {
             let checkstock = item.stock > 0 ? `<button class="addToCartBtn" onclick="GetQuantity(${item.id},${input})">add to cart</button>` : '';
             html += `
                 <div class="products">

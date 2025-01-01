@@ -3,10 +3,9 @@
     Model.currentUser = null;
     updateView();
 }
-async function checkPassword()
-{
-    if(Model.input.register.repeatpassword === Model.input.register.password)
-    {
+
+async function checkPassword() {
+    if (Model.input.register.repeatpassword === Model.input.register.password) {
         displayWelcomeMessage(`Velkommen ${Model.input.register.firstname}`);
         await addUser();
         Model.input.register.firstname = '';
@@ -17,13 +16,12 @@ async function checkPassword()
         Model.input.register.address = '';
         Model.input.register.city = '';
         await fromSignupToStore();
-    }
-    else
-    {
+    } else {
         Model.input.errorMessage = "Passordene stemmer ikke overens";
         updateView();
     }
 }
+
 async function checkUserNameExist() {
     let username = Model.input.register.username;
     Model.currentUser = null;
@@ -43,6 +41,7 @@ async function checkUserNameExist() {
         updateView();
     }
 }
+
 async function addUser() {
     let idCount = await axios.get('/userslength');
     let idNumber = idCount.data
@@ -60,6 +59,7 @@ async function addUser() {
     Model.currentUser = idNumber;
     await axios.post('/users', newUser);
 }
+
 function cancelSignup() {
     Model.input.register.firstname = '';
     Model.input.register.lastname = '';
@@ -70,6 +70,7 @@ function cancelSignup() {
     Model.input.register.city = '';
     goToLogin()
 }
+
 function displayWelcomeMessage(message) {
     Model.input.errorMessage = message;
     setTimeout(() => {

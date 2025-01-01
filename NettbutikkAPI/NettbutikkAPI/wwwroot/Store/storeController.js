@@ -5,12 +5,14 @@ async function goToStore() {
     Model.app.html.quantity = '';
     await sortBy(7)
 }
+
 async function fromSignupToStore() {
     Model.app.currentPage = Model.app.currentPages[2];
     let user = await axios.get(`/users/${Model.currentUser}`);
     Model.currentUser = user.data;
     await sortBy(7)
 }
+
 async function deleteCart() {
     for (let itemInCart of Model.currentUser.myCart) {
         let product = Model.input.productItems.find(p => p.id === itemInCart.id);
@@ -47,7 +49,7 @@ function openCart() {
     updateView();
 }
 
-async function addToCart(itemId,input) {
+async function addToCart(itemId, input) {
     let product = Model.input.productItems.find(p => p.id === itemId);
     let itemInCart = Model.currentUser.myCart.find(item => item.id === product.id);
     if (itemInCart) {
@@ -59,7 +61,7 @@ async function addToCart(itemId,input) {
             displaySuccessMessage(`${Model.input.inputQty} stk av ${product.nameOfProduct} er lagt til i handlekurven`)
         } else {
             displayErrorMessage("Ikke nok på lager");
-            return;
+
         }
     } else {
         if (Model.input.inputQty < product.stock) {
@@ -71,10 +73,10 @@ async function addToCart(itemId,input) {
             displaySuccessMessage(`${Model.input.inputQty} stk av ${product.nameOfProduct} er lagt til i handlekurven`)
         } else {
             displayErrorMessage("Ikke nok på lager");
-            return;
+
         }
     }
-    
+
 }
 
 async function updateServerData(product) {
@@ -85,6 +87,7 @@ async function updateServerData(product) {
         console.error("Error updating the server:", error);
     }
 }
+
 async function checkOut() {
     if (confirm('Betale nå?')) {
         let response = await axios.get(`/orders`)
@@ -108,6 +111,7 @@ async function checkOut() {
         updateView();
     }
 }
+
 function findPriceOfCartItems() {
     Model.input.ShoppingCartCounter = 0;
     Model.input.totalPrice = 0;
@@ -137,6 +141,7 @@ function displayErrorMessage(message) {
         updateView();
     }, 5000);
 }
+
 function displaySuccessMessage(message) {
     Model.input.errorMessage = message;
     Model.app.html.quantity = '';

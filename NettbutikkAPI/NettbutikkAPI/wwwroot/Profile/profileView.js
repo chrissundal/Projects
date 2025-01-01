@@ -25,6 +25,7 @@
     </footer>
     `;
 }
+
 async function showAllOrders() {
     let response = await axios.get(`/orders`)
     let orders = response.data;
@@ -44,7 +45,7 @@ async function showAllOrders() {
                     </div>
                 `;
             }
-            
+
             html += `
                 <tr>
                     <td>${order.orderId}</td>
@@ -57,14 +58,13 @@ async function showAllOrders() {
                 </tr>
             `;
         }
-    }
-    else
-    {
+    } else {
         html = `<h2 style="text-align: center">Her var det tomt...</h2>`;
     }
 
     return html;
 }
+
 async function cancelOrder(orderId) {
     if (confirm('Er du sikker?')) {
         let foundItem = Model.orders.find(p => p.orderId === orderId);

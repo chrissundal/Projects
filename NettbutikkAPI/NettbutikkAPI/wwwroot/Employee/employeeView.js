@@ -1,4 +1,4 @@
- async function updateEmployeeView() {
+async function updateEmployeeView() {
     document.getElementById('app').innerHTML = /*HTML*/`
     <div class="topHeader">
     <h3>Ansatt: ${Model.currentUser.firstName}</h3>
@@ -8,12 +8,11 @@
     ${createAddProducts() ?? ''}
     <div class="categoryResult">
         ${Model.app.html.productHtml} 
-          
     </div>
     `;
 }
-function showSortButtonsAdmin()
-{
+
+function showSortButtonsAdmin() {
     let html = '';
     for (let i = 0; i < Model.app.category.length; i++) {
         html += `
@@ -28,22 +27,22 @@ function showSortButtonsAdmin()
     </div>
     `;
 }
- 
- async function showPendingOrders() {
-     let orderResponse = await axios.get(`/orders`)
-     let orders = orderResponse.data;
-     Model.orders = orders;
+
+async function showPendingOrders() {
+    let orderResponse = await axios.get(`/orders`)
+    let orders = orderResponse.data;
+    Model.orders = orders;
     let response = await axios.get(`/users`);
     let users = response.data;
-     Model.app.html.productHtml = `
+    Model.app.html.productHtml = `
         ${getTopTableOrders()}
     `;
-     let sortedOrders = Model.orders.sort((a, b) => a.isSent - b.isSent);
-     for (let order of sortedOrders) {
-         let orderItemsHtml = '';
-         orderItemsHtml = GetInnerItems(order, orderItemsHtml);
-         let checksend = order.isSent ? '' : `<button onclick="sendOrder(${order.orderId})">Send ordre</button>`;
-         Model.app.html.productHtml += `
+    let sortedOrders = Model.orders.sort((a, b) => a.isSent - b.isSent);
+    for (let order of sortedOrders) {
+        let orderItemsHtml = '';
+        orderItemsHtml = GetInnerItems(order, orderItemsHtml);
+        let checksend = order.isSent ? '' : `<button onclick="sendOrder(${order.orderId})">Send ordre</button>`;
+        Model.app.html.productHtml += `
             <tr>
                 <td>${order.orderId}</td>
                 <td>${users[order.userId].firstName} ${users[order.userId].lastName}</td>
@@ -55,14 +54,15 @@ function showSortButtonsAdmin()
                 <td>${checksend}</td>
             </tr>
         `;
-     }
+    }
 
-     Model.app.html.productHtml += `</table>`;
-     updateView();
- }
- function GetInnerItems(order, orderItemsHtml) {
-     for (let item of order.orderItems) {
-         orderItemsHtml += `
+    Model.app.html.productHtml += `</table>`;
+    updateView();
+}
+
+function GetInnerItems(order, orderItemsHtml) {
+    for (let item of order.orderItems) {
+        orderItemsHtml += `
                 <div class="orderItem">
                     <img src="${item.imageUrl}" alt="${item.nameOfProduct}" class="orderItemImage" />
                     <span>${item.nameOfProduct}</span>
@@ -70,12 +70,12 @@ function showSortButtonsAdmin()
                     <span>Pris: ${item.price} kr</span>
                 </div>
             `;
-     }
-     return orderItemsHtml;
- }
+    }
+    return orderItemsHtml;
+}
 
- function getTopTableOrders() {
-     return `
+function getTopTableOrders() {
+    return `
         <table class="ordersTable">
          <tr>
              <th>Ordre Nummer</th>
@@ -86,25 +86,25 @@ function showSortButtonsAdmin()
              <th></th>
          </tr>
          `;
- }
+}
 
- async function sortByCategoryAdmin(input) {
-     let response = await axios.get('/products');
-     Model.input.productItems = response.data;
-     let result;
-     if (input === 7) {
-         result = Model.input.productItems;
-     } else {
-         let index = Model.app.category[input];
-         result = Model.input.productItems.filter(item => item.typeOfProduct === index);
-     }
-     let productHtml = '';
-     for (let item of result) {
-         let setInventory = Model.app.dropdown.editMode === item.nameOfProduct ?
-             `<input type="number" placeholder="Nytt antall" onInput="Model.input.inputStock=this.value"/> 
+async function sortByCategoryAdmin(input) {
+    let response = await axios.get('/products');
+    Model.input.productItems = response.data;
+    let result;
+    if (input === 7) {
+        result = Model.input.productItems;
+    } else {
+        let index = Model.app.category[input];
+        result = Model.input.productItems.filter(item => item.typeOfProduct === index);
+    }
+    let productHtml = '';
+    for (let item of result) {
+        let setInventory = Model.app.dropdown.editMode === item.nameOfProduct ?
+            `<input type="number" placeholder="Nytt antall" onInput="Model.input.inputStock=this.value"/> 
              <button onclick="addInventoryAdmin(${item.id},${input})">Bekreft</button>` :
-             `<button class="addInventoryBtn" onclick="Model.app.dropdown.editMode='${item.nameOfProduct}'; sortByCategoryAdmin(${input})">Sett antall</button>`;
-         productHtml += `
+            `<button class="addInventoryBtn" onclick="Model.app.dropdown.editMode='${item.nameOfProduct}'; sortByCategoryAdmin(${input})">Sett antall</button>`;
+        productHtml += `
             <tr class="productRow">
                 <td>${item.nameOfProduct}</td>
                 <td class="innerImg"><img src="${item.imageUrl}" height="100px" width="100px" /></td>
@@ -116,9 +116,9 @@ function showSortButtonsAdmin()
                 </td>
             </tr>
         `;
-     }
+    }
 
-     Model.app.html.productHtml = `
+    Model.app.html.productHtml = `
         <table class="productTable">
             <thead>
                 <tr>
@@ -134,6 +134,6 @@ function showSortButtonsAdmin()
             </tbody>
         </table>
     `;
-     updateView();
- }
+    updateView();
+}
  

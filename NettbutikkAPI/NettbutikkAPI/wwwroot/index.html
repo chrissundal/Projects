@@ -8,7 +8,7 @@
     <link href="Employee/employeestyle.css" rel="stylesheet">
     <link href="Login/loginStyle.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <link rel="stylesheet" href="Profile/profileStyle.css">
+    <link href="Profile/profileStyle.css" rel="stylesheet">
 </head>
 
 <body onload="updateView()">
@@ -16,7 +16,7 @@
 <div id="app"></div>
 <script>
     function updateView() {
-        
+
         if (Model.app.currentPage == "Store") {
             updateStoreView();
         } else if (Model.app.currentPage == "Employee") {

@@ -28,6 +28,7 @@ function createAddProducts() {
     </div>
     `;
 }
+
 function openAddProducts() {
     Model.app.dropdown.isAdding = true;
     Model.app.html.productHtml = '';
@@ -43,6 +44,7 @@ function closeAddProducts() {
     Model.input.inputImage = "";
     updateView();
 }
+
 function readPhotoMemory(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -52,6 +54,7 @@ function readPhotoMemory(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
 async function addItems() {
     let newProduct = {
         id: 0,
@@ -75,8 +78,8 @@ async function sendOrder(orderId) {
     await axios.put('/orders', foundOrder);
     await showPendingOrders();
 }
-async function addInventoryAdmin(itemId,input)
-{
+
+async function addInventoryAdmin(itemId, input) {
     let product = Model.input.productItems[itemId]
     product.stock = Model.input.inputStock;
     Model.input.inputStock = 0;
@@ -84,10 +87,9 @@ async function addInventoryAdmin(itemId,input)
     await updateServerData(product);
     await sortByCategoryAdmin(input);
 }
-async function deleteItemAdmin(itemId,input)
-{
-    if(confirm('Er du sikker?') == true)
-    {
+
+async function deleteItemAdmin(itemId, input) {
+    if (confirm('Er du sikker?') == true) {
         Model.input.productItems.splice(itemId, 1);
         await axios.delete(`/products/${itemId}`);
         await sortByCategoryAdmin(input);

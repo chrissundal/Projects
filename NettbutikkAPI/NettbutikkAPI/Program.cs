@@ -1,4 +1,3 @@
-using System.Text.Json;
 using NettbutikkAPI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -35,14 +34,9 @@ app.MapGet("/users", () => userManager.GetUsers());
 app.MapGet("/users/{id:int}", (int id) =>
 {
     var user = userManager.GetUserById(id);
-    if (user != null)
-    {
-        return Results.Ok(user);
-    }
-    else
-    {
-        return Results.NotFound("User not found");
-    }
+    if (user != null) return Results.Ok(user);
+
+    return Results.NotFound("User not found");
 });
 app.MapGet("/check-username/{username}", (string username) =>
 {
@@ -50,10 +44,7 @@ app.MapGet("/check-username/{username}", (string username) =>
     return Results.Ok(userExists);
 });
 app.MapGet("/userslength", () => userManager.GetUserCount());
-app.MapPost("/users", (Person newUser) =>
-{
-    userManager.AddUser(newUser);
-});
+app.MapPost("/users", (Person newUser) => { userManager.AddUser(newUser); });
 app.MapPut("/users/{id:int}", (int id, Person updatedUser) =>
 {
     userManager.UpdateUser(id, updatedUser);
@@ -61,16 +52,12 @@ app.MapPut("/users/{id:int}", (int id, Person updatedUser) =>
 });
 app.MapPost("/login", (LoginRequest loginRequest) =>
 {
-    Console.WriteLine($"Received login attempt with Username: {loginRequest.UserName}, Password: {loginRequest.PassWord}");
+    Console.WriteLine(
+        $"Received login attempt with Username: {loginRequest.UserName}, Password: {loginRequest.PassWord}");
     var user = userManager.ValidateLogin(loginRequest.UserName, loginRequest.PassWord);
-    if (user != null)
-    {
-        return Results.Ok(user);
-    }
-    else
-    {
-        return Results.Unauthorized();
-    }
+    if (user != null) return Results.Ok(user);
+
+    return Results.Unauthorized();
 });
 
 //orders
@@ -95,10 +82,3 @@ app.MapPut("/orders", (Order updatedOrder) =>
     return Results.Ok(updatedOrder);
 });
 app.Run();
-
-
-
-
-
-
-
