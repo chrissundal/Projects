@@ -2,13 +2,6 @@
 
 public class Product
 {
-    public int Id { get; private set; }
-    public string NameOfProduct { get; private set; }
-    public string TypeOfProduct { get; private set; }
-    public int Price { get; private set; }
-    public int Stock { get; private set; }
-    public string ImageUrl { get; private set; }
-    
     public Product(int id, string nameOfProduct, string typeOfProduct, int price, int stock, string imageUrl)
     {
         Id = id;
@@ -18,7 +11,14 @@ public class Product
         Stock = stock;
         ImageUrl = imageUrl;
     }
-    
+
+    public int Id { get; private set; }
+    public string NameOfProduct { get; private set; }
+    public string TypeOfProduct { get; private set; }
+    public int Price { get; private set; }
+    public int Stock { get; private set; }
+    public string ImageUrl { get; private set; }
+
     public void SetStock(int updatedProductStock)
     {
         Stock = updatedProductStock;
