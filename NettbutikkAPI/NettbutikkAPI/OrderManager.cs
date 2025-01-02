@@ -23,7 +23,7 @@ public class OrderManager
                 [
                     new Product(1, "Dusjhette", "Clothing", 99, 1, "IMG/productIMG/showercap.jpg"),
                     new Product(8, "Eple", "Food", 7, 1, "IMG/productIMG/eple.jpg")
-                ], false)
+                ], 0)
             ];
         }
     }
@@ -35,8 +35,15 @@ public class OrderManager
 
     public void AddOrder(Order newOrder)
     {
-        _orders.Add(newOrder);
-        SaveOrders();
+        if (!_orders.Contains(newOrder))
+        {
+            _orders.Add(newOrder);
+            SaveOrders();
+        }
+        else
+        {
+            Console.WriteLine("Order already exists");
+        }
     }
 
     public void UpdateOrder(Order updatedOrder)
@@ -64,7 +71,6 @@ public class OrderManager
                 }
             }
 
-            _orders.Remove(order);
             SaveOrders();
         }
     }
@@ -73,5 +79,15 @@ public class OrderManager
     {
         var updatedJson = JsonSerializer.Serialize(_orders);
         File.WriteAllText("orders.json", updatedJson);
+    }
+
+    public void DeleteOrder(int orderId)
+    {
+        var order = _orders.FirstOrDefault(o => o.OrderId == orderId);
+        if (order != null)
+        {
+            _orders.Remove(order);
+            SaveOrders();
+        }
     }
 }

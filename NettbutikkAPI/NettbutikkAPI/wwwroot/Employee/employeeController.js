@@ -4,33 +4,38 @@ async function goToEmployee() {
     updateView();
 }
 
-//add products
+//add
 
-function createAddProducts() {
-    if (Model.app.dropdown.isAdding)
-        return `
-    <div class="addProducts">
-    <input type="text" placeholder="Navn på produkt" onInput="Model.input.inputName=this.value"/>
-    <select onchange="Model.input.inputCategory=this.value">
-        <option></option>
-        <option value="${Model.app.category[0]}">${Model.app.category[0]}</option>
-        <option value="${Model.app.category[1]}">${Model.app.category[1]}</option>
-        <option value="${Model.app.category[2]}">${Model.app.category[2]}</option>
-        <option value="${Model.app.category[3]}">${Model.app.category[3]}</option>
-        <option value="${Model.app.category[4]}">${Model.app.category[4]}</option>
-        <option value="${Model.app.category[5]}">${Model.app.category[5]}</option>
-    </select>
-    <input type="file" onchange="readPhotoMemory(this)"/>
-    <input type="number" placeholder="Pris" onInput="Model.input.inputPrice=this.valueAsNumber"/>
-    <input type="number" placeholder="Antall" onInput="Model.input.inputStock=this.valueAsNumber"/>
-    <button onclick="addItems()">Add</button>
-    <button onclick="closeAddProducts()">Close</button>
-    </div>
-    `;
+async function addEmployee() {
+    let idCount = await axios.get('/userslength');
+    let idNumber = idCount.data
+    let newUser = {
+        firstName: Model.input.register.firstname,
+        lastName: Model.input.register.lastname,
+        userName: Model.input.register.username,
+        passWord: Model.input.register.password,
+        address: Model.input.register.address,
+        city: Model.input.register.city,
+        id: idNumber,
+        myCart: [],
+        isEmployee: true,
+        isAdmin: false
+    };
+    await axios.post('/users', newUser);
+    Model.app.dropdown.isAddEmployee = false;
+    displayWelcomeMessage(`${Model.input.register.firstname} ${Model.input.register.lastname} er lagt til`);
+    blankSignup();
+    await showPendingOrders()
 }
 
 function openAddProducts() {
     Model.app.dropdown.isAdding = true;
+    Model.app.html.productHtml = '';
+    updateView();
+}
+
+function openAddEmployee() {
+    Model.app.dropdown.isAddEmployee = true;
     Model.app.html.productHtml = '';
     updateView();
 }
@@ -42,6 +47,12 @@ function closeAddProducts() {
     Model.input.inputCategory = "";
     Model.input.inputStock = 0;
     Model.input.inputImage = "";
+    updateView();
+}
+
+function closeAddEmployee() {
+    Model.app.dropdown.isAddEmployee = false;
+    blankSignup();
     updateView();
 }
 
@@ -70,13 +81,21 @@ async function addItems() {
     await sortByCategoryAdmin(4)
 }
 
-//modify products
+//modify
 
-async function sendOrder(orderId) {
+async function changeOrder(orderId, input) {
     let foundOrder = Model.orders.find(order => order.orderId === orderId);
-    foundOrder.isSent = true;
+    foundOrder.status = input;
     await axios.put('/orders', foundOrder);
-    await showPendingOrders();
+    if (input == 1) {
+        await showPendingOrders();
+    } else if (input == 2) {
+        await cancelOrder(orderId)
+        await showPendingOrders();
+    } else if (input == 3) {
+        await cancelOrder(orderId)
+        updateView();
+    }
 }
 
 async function addInventoryAdmin(itemId, input) {
@@ -86,6 +105,17 @@ async function addInventoryAdmin(itemId, input) {
     Model.app.dropdown.editMode = '';
     await updateServerData(product);
     await sortByCategoryAdmin(input);
+}
+
+async function cancelOrder(orderId) {
+    if (confirm('Er du sikker?')) {
+        let foundOrder = Model.orders.find(p => p.orderId === orderId);
+        if (foundOrder) {
+            await axios.put(`/orders/${orderId}`);
+        } else {
+            alert("Order not found.");
+        }
+    }
 }
 
 async function deleteItemAdmin(itemId, input) {

@@ -17,8 +17,8 @@ public class UserManager
         {
             _users =
             [
-                new Person("Chris", "Jacobsen", "c", "1", "Svingen 2", "Larvik", 0, new List<Product>(), true),
-                new Person("Bjarne", "Hansen", "b", "1", "Torget 7", "Sandefjord", 1, new List<Product>(), false)
+                new Person("Chris", "Jacobsen", "c", "1", "Svingen 2", "Larvik", 0, new List<Product>(), true, true),
+                new Person("Bjarne", "Hansen", "b", "1", "Torget 7", "Sandefjord", 1, new List<Product>(), false, false)
             ];
         }
     }

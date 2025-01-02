@@ -53,7 +53,7 @@ async function addToCart(itemId, input) {
     let product = Model.input.productItems.find(p => p.id === itemId);
     let itemInCart = Model.currentUser.myCart.find(item => item.id === product.id);
     if (itemInCart) {
-        if (Model.input.inputQty < product.stock) {
+        if (Model.input.inputQty <= product.stock) {
             itemInCart.stock += Model.input.inputQty;
             product.stock -= Model.input.inputQty;
             await updateServerData(product)
@@ -64,7 +64,7 @@ async function addToCart(itemId, input) {
 
         }
     } else {
-        if (Model.input.inputQty < product.stock) {
+        if (Model.input.inputQty <= product.stock) {
             let productToAdd = {...product, stock: Model.input.inputQty};
             Model.currentUser.myCart.push(productToAdd);
             product.stock -= Model.input.inputQty;
@@ -98,17 +98,22 @@ async function checkOut() {
             orderId: Model.orders.length,
             totalPrice: Model.input.totalPrice,
             orderItems: Model.currentUser.myCart,
-            isSent: false
+            status: 0
         }
-        Model.orders.push(orderStore);
-        Model.currentUser.myCart = [];
-        await axios.put(`/users/${Model.currentUser.id}`, Model.currentUser);
-        await axios.post('/orders', orderStore);
-        Model.input.totalPrice = 0;
-        Model.input.ShoppingCartCounter = 0;
-        Model.app.dropdown.isOpen = false;
-        resetSort();
-        updateView();
+        let found = Model.orders.find(item => item.orderId === orderStore.orderId);
+        if (!found) {
+            Model.orders.push(orderStore);
+            Model.currentUser.myCart = [];
+            await axios.put(`/users/${Model.currentUser.id}`, Model.currentUser);
+            await axios.post('/orders', orderStore);
+            Model.input.totalPrice = 0;
+            Model.input.ShoppingCartCounter = 0;
+            Model.app.dropdown.isOpen = false;
+            resetSort();
+            updateView();
+        } else {
+            displayErrorMessage("Ordre finnes allerede")
+        }
     }
 }
 

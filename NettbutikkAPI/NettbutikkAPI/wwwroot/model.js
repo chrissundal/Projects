@@ -13,6 +13,7 @@ let Model = {
         dropdown: {
             isOpen: false,
             isAdding: false,
+            isAddEmployee: false,
             editMode: ''
         },
         html: {
@@ -66,8 +67,6 @@ let Model = {
         id: 0,
         myCart: [],
         isEmployee: true,
+        isAdmin: true
     }
 }
-
-
-

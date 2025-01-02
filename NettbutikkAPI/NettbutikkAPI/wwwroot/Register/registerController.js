@@ -8,18 +8,22 @@ async function checkPassword() {
     if (Model.input.register.repeatpassword === Model.input.register.password) {
         displayWelcomeMessage(`Velkommen ${Model.input.register.firstname}`);
         await addUser();
-        Model.input.register.firstname = '';
-        Model.input.register.lastname = '';
-        Model.input.register.username = '';
-        Model.input.register.password = '';
-        Model.input.register.repeatpassword = '';
-        Model.input.register.address = '';
-        Model.input.register.city = '';
+        blankSignup();
         await fromSignupToStore();
     } else {
         Model.input.errorMessage = "Passordene stemmer ikke overens";
         updateView();
     }
+}
+
+function blankSignup() {
+    Model.input.register.firstname = '';
+    Model.input.register.lastname = '';
+    Model.input.register.username = '';
+    Model.input.register.password = '';
+    Model.input.register.repeatpassword = '';
+    Model.input.register.address = '';
+    Model.input.register.city = '';
 }
 
 async function checkUserNameExist() {
@@ -55,6 +59,7 @@ async function addUser() {
         id: idNumber,
         myCart: [],
         isEmployee: false,
+        isAdmin: false
     };
     Model.currentUser = idNumber;
     await axios.post('/users', newUser);

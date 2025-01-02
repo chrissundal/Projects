@@ -126,6 +126,7 @@ function createDropdown() {
             <div class="main">
                 <div>${createCartItems()}</div>
                 <div><strong>Totalt: ${Model.input.totalPrice} kr</strong></div>
+                ${Model.input.errorMessage ?? ''}
                 <button onclick="checkOut()">Checkout</button>
                 <button onclick="closePocket()">Close</button>
                 <button onclick="deleteCart()">Delete</button>
@@ -148,7 +149,6 @@ function createCartItems() {
             <div>Pris: ${Model.currentUser.myCart[cartIndex].price} kr</div>
             <button onclick="deleteItem(${cartIndex})">X</button>
         </div>
-        ${Model.input.errorMessage ?? ''}
         `;
     }
     return html;

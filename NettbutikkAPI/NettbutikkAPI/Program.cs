@@ -66,10 +66,14 @@ var orderManager = new OrderManager("orders.json", productManager);
 
 app.MapDelete("/orders/{orderId:int}", (int orderId) =>
 {
+    orderManager.DeleteOrder(orderId);
+    return Results.Ok();
+});
+app.MapPut("/orders/{orderId:int}", (int orderId) =>
+{
     orderManager.CancelOrder(orderId);
     return Results.Ok();
 });
-
 app.MapGet("/orders", () => orderManager.GetOrders());
 app.MapPost("/orders", (Order newOrder) =>
 {

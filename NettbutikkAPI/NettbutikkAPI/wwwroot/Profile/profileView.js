@@ -12,7 +12,6 @@
                 <th>Total Pris</th>
                 <th></th>
                 <th>Ordre Status</th>
-                <th></th>
             </tr>
             <tbody>
                 ${await showAllOrders()}
@@ -27,11 +26,11 @@
 }
 
 async function showAllOrders() {
-    let response = await axios.get(`/orders`)
+    let response = await axios.get(`/orders`);
     let orders = response.data;
     Model.orders = orders;
     let html = '';
-    let myOrders = Model.orders.filter(order => order.userId === Model.currentUser.id)
+    let myOrders = Model.orders.filter(order => order.userId === Model.currentUser.id);
     if (myOrders.length > 0) {
         for (let order of myOrders) {
             let orderItemsHtml = '';
@@ -45,16 +44,27 @@ async function showAllOrders() {
                     </div>
                 `;
             }
-
+            let statusText = '';
+            let ordercheck = order.status === 0 ? `<button onclick="changeOrder(${order.orderId}, 3)">Avbryt ordre</button>` : '';
+            switch (order.status) {
+                case 1:
+                    statusText = 'sendt';
+                    break;
+                case 2:
+                    statusText = 'kansellert av butikk';
+                    break;
+                case 3:
+                    statusText = 'kansellert av deg';
+                    break;
+                default:
+                    statusText = 'ikke sendt';
+            }
             html += `
                 <tr>
                     <td>${order.orderId}</td>
                     <td>${order.totalPrice} kr</td>
-                    <td>
-                        ${orderItemsHtml}
-                    </td>
-                    <td>${order.isSent ? 'sendt' : 'ikke sendt'}</td>
-                    <td>${order.isSent ? '' : `<button onclick="cancelOrder(${order.orderId})">Avbryt ordre</button>`}</td>
+                    <td>${orderItemsHtml}</td>
+                    <td>${statusText ? statusText : ordercheck}</td>
                 </tr>
             `;
         }
@@ -64,20 +74,3 @@ async function showAllOrders() {
 
     return html;
 }
-
-async function cancelOrder(orderId) {
-    if (confirm('Er du sikker?')) {
-        let foundItem = Model.orders.find(p => p.orderId === orderId);
-        if (foundItem) {
-            await axios.delete(`/orders/${orderId}`);
-            const response = await axios.get('/orders');
-            Model.orders = response.data;
-            closePocket();
-            updateView();
-        } else {
-            alert("Order not found.");
-        }
-    }
-}
-
-
