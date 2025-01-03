@@ -1,23 +1,26 @@
 async function updateEmployeeView() {
     document.getElementById('app').innerHTML = /*HTML*/`
     <div class="topHeader">
-    <h3>Ansatt: ${Model.currentUser.firstName}</h3>
+        <h3>Ansatt: ${Model.currentUser.firstName}</h3>
     </div>
     <img src="IMG/back.png" class="logoutButton" height=40px onclick="goToStore()">
     ${showSortButtonsAdmin()}
     <div class="storeMessage">${Model.input.errorMessage}</div>
-    ${createAddProducts() ?? ''}
-    ${createNewEmployee() ?? ''}
-    <div class="categoryResult">
-        ${Model.app.html.productHtml} 
+    <div class="employeeContainer">
+        ${createAddProducts() ?? ''}
+        ${createNewEmployee() ?? ''}
+        ${await editEmployee() ?? ''}
     </div>
+        <div class="categoryResult">
+            ${Model.app.html.productHtml} 
+        </div>
     `;
 }
-
 function createAddProducts() {
     if (Model.app.dropdown.isAdding)
         return `
     <div class="addProducts">
+    <h3>Legg til nytt produkt</h3>
     <input type="text" placeholder="Navn på produkt" onInput="Model.input.inputName=this.value"/>
     <select onchange="Model.input.inputCategory=this.value">
         <option></option>
@@ -36,7 +39,27 @@ function createAddProducts() {
     </div>
     `;
 }
-
+async function editEmployee() {
+    if(!Model.app.dropdown.isEditEmployee) return '';
+    else {
+    let found = await axios.get(`/users/${Model.app.html.editUser}`);
+    Model.input.editUser = found.data;
+    let html = `
+    <div class="addProducts">
+        <h3>Endre ansatt</h3>
+        <input type="text" placeholder="${Model.input.editUser.firstName}" onchange="Model.input.register.firstname=this.value" />    
+        <input type="text" placeholder="${Model.input.editUser.lastName}" oninput="Model.input.register.lastname=this.value" />
+        <input type="text" placeholder="${Model.input.editUser.userName}"  oninput="Model.input.register.username=this.value" />    
+        <input type="text" placeholder="${Model.input.editUser.address}" oninput="Model.input.register.address=this.value" />    
+        <input type="text" placeholder="${Model.input.editUser.city}" oninput="Model.input.register.city=this.value" />    
+        <input type="text" placeholder="${Model.input.editUser.passWord}" oninput="Model.input.register.password=this.value" />    
+        <button onclick="updateEmployee()">Endre</button>
+        <button onclick="closeEditEmployee()">Avbryt</button>
+    </div>
+    `;
+    return html;
+    }
+}
 function createNewEmployee() {
     if (Model.app.dropdown.isAddEmployee)
         return `
@@ -53,7 +76,6 @@ function createNewEmployee() {
     </div>
     `;
 }
-
 function showSortButtonsAdmin() {
     let html = '';
     for (let i = 0; i < Model.app.category.length; i++) {
@@ -66,12 +88,41 @@ function showSortButtonsAdmin() {
         ${html}
         <button onclick="openAddProducts()">Legg til produkt</button>
         <button onclick="openAddEmployee()">Legg til ansatt</button>
-        <button onclick="showPendingOrders()">Sende</button>
         <button onclick="showEmployee()">Se Ansatte</button>
+        <button onclick="showAllUsers()">Se Brukere</button>
+        <button onclick="showPendingOrders()">Sende</button>
     </div>
     `;
 }
-
+async function showAllUsers() {
+    let response = await axios.get(`/users`)
+    let users = await response.data;
+    Model.app.html.productHtml = `
+    <h3>Ansatte</h3>
+    <table class="ordersTable">
+        <tr>
+             <th>Id nummer</th>
+             <th>Navn</th>
+             <th>Adresse</th>
+             <th>By</th>
+             <th></th>
+        </tr>
+    `;
+    for (let user of users) {
+            Model.app.html.productHtml += `
+            <tr>
+                <td>${user.id}</td>
+                <td>${user.firstName} ${user.lastName}</td>
+                <td>${user.address}</td>
+                <td>${user.city}</td>
+                <td><button onclick="blockUser(${user.id})">Blokker</button></td>
+            </tr>
+            `;
+        
+    }
+    Model.app.html.productHtml += `</table>`;
+    closeAllDropEmployee();
+}
 async function showEmployee() {
     let response = await axios.get(`/users`)
     let users = await response.data;
@@ -94,23 +145,20 @@ async function showEmployee() {
                 <td>${user.firstName} ${user.lastName}</td>
                 <td>${user.address}</td>
                 <td>${user.city}</td>
-                <td>${Model.currentUser.isAdmin ? `<button>Endre</button> <button>Slett</button>` : ''}</td>
+                <td>${Model.currentUser.isAdmin ? `<button onclick="openEditEmployee(${user.id})">Endre</button> <button onclick="removeEmployee(${user.id})">Slett</button>` : ''}</td>
             </tr>
             `;
         }
     }
     Model.app.html.productHtml += `</table>`;
-    users = null;
-    updateView();
+    closeAllDropEmployee();
 }
 
 async function showPendingOrders() {
     let orderResponse = await axios.get(`/orders`);
     let orders = orderResponse.data;
     Model.orders = orders;
-    Model.app.html.productHtml = `
-        ${getTopTableOrders()}
-    `;
+    Model.app.html.productHtml = `${getTopTableOrders()}`;
     let sortedOrders = Model.orders.sort((a, b) => a.status - b.status);
     for (let order of sortedOrders) {
         let orderItemsHtml = '';
@@ -146,7 +194,7 @@ async function showPendingOrders() {
     }
 
     Model.app.html.productHtml += `</table>`;
-    updateView();
+    closeAllDropEmployee();
 }
 
 function GetInnerItems(order, orderItemsHtml) {
@@ -222,6 +270,6 @@ async function sortByCategoryAdmin(input) {
             </tbody>
         </table>
     `;
-    updateView();
+    closeAllDropEmployee();
 }
  

@@ -59,7 +59,8 @@ async function addUser() {
         id: idNumber,
         myCart: [],
         isEmployee: false,
-        isAdmin: false
+        isAdmin: false,
+        isBanned: false,
     };
     Model.currentUser = idNumber;
     await axios.post('/users', newUser);

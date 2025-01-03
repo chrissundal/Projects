@@ -11,10 +11,15 @@ async function checklogin() {
         let response = await axios.post('/login', {UserName: username, PassWord: password});
         if (response.status === 200) {
             Model.currentUser = response.data;
-            displayWelcomeMessage(`Velkommen ${Model.currentUser.firstName}`);
-            Model.input.login.username = '';
-            Model.input.login.password = '';
-            await goToStore();
+            if(Model.currentUser.isBanned) {
+                goToBanned();
+            }
+            else {
+                displayWelcomeMessage(`Velkommen ${Model.currentUser.firstName}`);
+                Model.input.login.username = '';
+                Model.input.login.password = '';
+                await goToStore();
+            }
         } else {
             Model.input.errorMessage = 'Ugyldig passord eller brukernavn';
             updateView();

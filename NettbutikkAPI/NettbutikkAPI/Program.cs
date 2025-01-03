@@ -59,7 +59,11 @@ app.MapPost("/login", (LoginRequest loginRequest) =>
 
     return Results.Unauthorized();
 });
-
+app.MapDelete("/users/{id:int}", (int id) =>
+{
+    userManager.RemoveUserById(id);
+    return Results.NoContent();
+});
 //orders
 
 var orderManager = new OrderManager("orders.json", productManager);

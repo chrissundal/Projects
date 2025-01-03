@@ -1,9 +1,15 @@
 async function goToStore() {
-    Model.app.currentPage = Model.app.currentPages[2];
     let user = await axios.get(`/users/${Model.currentUser.id}`);
     Model.currentUser = user.data;
-    Model.app.html.quantity = '';
-    await sortBy(7)
+    if (Model.currentUser.isBanned) {
+        goToBanned();
+    }
+    else {
+        Model.app.currentPage = Model.app.currentPages[2];
+        Model.app.html.quantity = '';
+        await sortBy(7)
+    }
+    updateView();
 }
 
 async function fromSignupToStore() {

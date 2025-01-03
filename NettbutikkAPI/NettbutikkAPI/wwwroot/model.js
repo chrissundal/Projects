@@ -14,24 +14,28 @@ let Model = {
             isOpen: false,
             isAdding: false,
             isAddEmployee: false,
+            isEditEmployee: false,
             editMode: ''
         },
         html: {
             productHtml: '',
             storeItems: '',
             categoryText: '',
-            quantity: ''
+            quantity: '',
+            editUser: 0
         },
         currentPages: [
             "Login",
             "Employee",
             "Store",
             "Profile",
-            "Register"
+            "Register",
+            "Banned"
         ],
         currentPage: "Profile"
     },
     input: {
+        editUser: '',
         errorMessage: '',
         inputQty: 0,
         inputName: '',
@@ -67,6 +71,7 @@ let Model = {
         id: 0,
         myCart: [],
         isEmployee: true,
-        isAdmin: true
+        isAdmin: true,
+        isBanned: false,
     }
 }

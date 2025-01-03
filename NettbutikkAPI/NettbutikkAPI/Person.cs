@@ -12,8 +12,9 @@ public class Person
     public List<Product> MyCart { get; }
     public bool IsEmployee { get; private set; }
     public bool IsAdmin { get; private set; }
-
-    public Person(string firstName, string lastName, string userName, string passWord, string address, string city, int id, List<Product> myCart, bool isEmployee, bool isAdmin)
+    public bool IsBanned { get; private set; }
+    
+    public Person(string firstName, string lastName, string userName, string passWord, string address, string city, int id, List<Product> myCart, bool isEmployee, bool isAdmin, bool isBanned)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -25,5 +26,6 @@ public class Person
         MyCart = myCart;
         IsEmployee = isEmployee;
         IsAdmin = isAdmin;
+        IsBanned = isBanned;
     }
 }

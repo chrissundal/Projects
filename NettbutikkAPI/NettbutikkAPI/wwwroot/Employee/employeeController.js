@@ -1,7 +1,7 @@
 async function goToEmployee() {
     Model.app.currentPage = Model.app.currentPages[1];
+    closeAllDropEmployee();
     await showPendingOrders()
-    updateView();
 }
 
 //add
@@ -19,7 +19,8 @@ async function addEmployee() {
         id: idNumber,
         myCart: [],
         isEmployee: true,
-        isAdmin: false
+        isAdmin: false,
+        isBanned: false,
     };
     await axios.post('/users', newUser);
     Model.app.dropdown.isAddEmployee = false;
@@ -29,12 +30,22 @@ async function addEmployee() {
 }
 
 function openAddProducts() {
+    Model.app.dropdown.isAddEmployee = false;
+    Model.app.dropdown.isEditEmployee = false;
     Model.app.dropdown.isAdding = true;
     Model.app.html.productHtml = '';
     updateView();
 }
-
+function closeAllDropEmployee() {
+    Model.app.dropdown.isAddEmployee = false;
+    Model.app.dropdown.isEditEmployee = false;
+    Model.app.dropdown.isAdding = false;
+    Model.app.dropdown.isOpen = false;
+    updateView();
+}
 function openAddEmployee() {
+    Model.app.dropdown.isAdding = false;
+    Model.app.dropdown.isEditEmployee = false;
     Model.app.dropdown.isAddEmployee = true;
     Model.app.html.productHtml = '';
     updateView();
@@ -97,7 +108,46 @@ async function changeOrder(orderId, input) {
         updateView();
     }
 }
-
+async function blockUser(userId) {
+    let response = await axios.get(`/users/${userId}`);
+    let user = response.data;
+    user.isBanned = true;
+    await axios.put(`/users/${user.id}`, user);
+    displayWelcomeMessage(`${user.firstName} ${user.lastName} blokkert!`);
+}
+function openEditEmployee(userId) {
+    Model.app.dropdown.isEditEmployee = true;
+    Model.app.dropdown.isAddEmployee = false;
+    Model.app.dropdown.isAdding = false;
+    Model.app.html.editUser = userId;
+    blankSignup();
+    updateView();
+}
+function closeEditEmployee() {
+    Model.app.dropdown.isEditEmployee = false;
+    blankSignup();
+    updateView();
+}
+async function removeEmployee(userId) {
+    let response = await axios.delete(`/users/${userId}`);
+    await showEmployee();
+    displayWelcomeMessage("Bruker fjernet")
+}
+async function updateEmployee() {
+    Model.app.html.editUser = null;
+    Model.input.editUser.firstName = !Model.input.register.firstname ? Model.input.editUser.firstName : Model.input.register.firstname;
+    Model.input.editUser.lastName = !Model.input.register.lastname ? Model.input.editUser.lastName : Model.input.register.lastname;
+    Model.input.editUser.userName = !Model.input.register.username ? Model.input.editUser.userName : Model.input.register.username;
+    Model.input.editUser.address = !Model.input.register.address ? Model.input.editUser.address : Model.input.register.address;
+    Model.input.editUser.city = !Model.input.register.city ? Model.input.editUser.city : Model.input.register.city;
+    Model.input.editUser.passWord = !Model.input.register.password ? Model.input.editUser.passWord : Model.input.register.password;
+    await axios.put(`/users/${Model.input.editUser.id}`, Model.input.editUser);
+    Model.input.editUser = '';
+    closeEditEmployee();
+    blankSignup()
+    await showEmployee();
+    displayWelcomeMessage("Bruker oppdatert")
+}
 async function addInventoryAdmin(itemId, input) {
     let product = Model.input.productItems[itemId]
     product.stock = Model.input.inputStock;

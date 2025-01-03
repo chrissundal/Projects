@@ -10,8 +10,13 @@
     z-index: 3;
     padding: 10px;
     gap: 10px;
+    border-radius: 10px;
 }
-
+.employeeContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 .productTable {
     width: 100%;
     border-collapse: collapse;
