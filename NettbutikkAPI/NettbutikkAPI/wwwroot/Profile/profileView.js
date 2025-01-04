@@ -2,9 +2,10 @@
     findPriceOfCartItems();
     document.getElementById('app').innerHTML = /*HTML*/`
     <div class="topHeader">
-    <h3>Mine ordre</h3>
+        <img class="logo" src="IMG/prisparadis.png" height="75px" alt=""/>
     </div>
-    <img src="IMG/back.png" class="logoutButton" height=40px onclick="goToStore()">
+    <div class="profileHeader">Mine ordre</div>
+    <img src="IMG/back.png" class="employeeBackButton" height=40px onclick="goToStore()">
     <div class="categoryResult">
         <table class="ordersTable">
             <tr>
@@ -35,12 +36,15 @@ async function showAllOrders() {
         for (let order of myOrders) {
             let orderItemsHtml = '';
             for (let item of order.orderItems) {
+                let discountPercentage = item.priceModifier.toFixed(2).split('.')[1];
+                let checkSale = item.isOnSale ? `-${discountPercentage}%` : "";
                 orderItemsHtml += `
                     <div class="orderItem">
                         <img src="${item.imageUrl}" alt="${item.nameOfProduct}" class="orderItemImage" />
                         <span>${item.nameOfProduct}</span>
-                        <span>Quantity: ${item.stock}</span>
-                        <span>Price: ${item.price} kr</span>
+                        <span>Antall: ${item.stock}</span>
+                        <span>Pris: ${item.price} kr</span>
+                        <span>${checkSale}</span>
                     </div>
                 `;
             }

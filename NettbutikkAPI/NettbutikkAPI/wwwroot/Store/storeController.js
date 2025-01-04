@@ -3,8 +3,7 @@ async function goToStore() {
     Model.currentUser = user.data;
     if (Model.currentUser.isBanned) {
         goToBanned();
-    }
-    else {
+    } else {
         Model.app.currentPage = Model.app.currentPages[2];
         Model.app.html.quantity = '';
         await sortBy(7)
@@ -24,13 +23,13 @@ async function deleteCart() {
         let product = Model.input.productItems.find(p => p.id === itemInCart.id);
         if (product) {
             product.stock += itemInCart.stock;
-            await axios.put(`/products/${product.id}`, {stock: product.stock});
+            await axios.put(`/products/${product.id}`, product);
         }
     }
     Model.currentUser.myCart = [];
     await axios.put(`/users/${Model.currentUser.id}`, Model.currentUser);
     closePocket();
-    updateView();
+    await sortBy(7);
 }
 
 async function deleteItem(cartIndex) {
@@ -55,7 +54,7 @@ function openCart() {
     updateView();
 }
 
-async function addToCart(itemId, input) {
+async function addToCart(itemId, input, inputPrice) {
     let product = Model.input.productItems.find(p => p.id === itemId);
     let itemInCart = Model.currentUser.myCart.find(item => item.id === product.id);
     if (itemInCart) {
@@ -71,7 +70,7 @@ async function addToCart(itemId, input) {
         }
     } else {
         if (Model.input.inputQty <= product.stock) {
-            let productToAdd = {...product, stock: Model.input.inputQty};
+            let productToAdd = {...product, price: inputPrice.toFixed(2), stock: Model.input.inputQty};
             Model.currentUser.myCart.push(productToAdd);
             product.stock -= Model.input.inputQty;
             await updateServerData(product)
@@ -82,13 +81,12 @@ async function addToCart(itemId, input) {
 
         }
     }
-
 }
 
 async function updateServerData(product) {
     try {
         await axios.put(`/users/${Model.currentUser.id}`, Model.currentUser);
-        await axios.put(`/products/${product.id}`, {stock: product.stock});
+        await axios.put(`/products/${product.id}`, product);
     } catch (error) {
         console.error("Error updating the server:", error);
     }
@@ -102,7 +100,7 @@ async function checkOut() {
         let orderStore = {
             userId: Model.currentUser.id,
             orderId: Model.orders.length,
-            totalPrice: Model.input.totalPrice,
+            totalPrice: Model.input.totalPrice.toFixed(2),
             orderItems: Model.currentUser.myCart,
             status: 0
         }

@@ -1,11 +1,13 @@
 async function updateEmployeeView() {
     document.getElementById('app').innerHTML = /*HTML*/`
     <div class="topHeader">
-        <h3>Ansatt: ${Model.currentUser.firstName}</h3>
+        <img class="logo" src="IMG/prisparadis.png" height="75px" alt=""/>
     </div>
-    <img src="IMG/back.png" class="logoutButton" height=40px onclick="goToStore()">
+    <div class="employeeName">Ansatt: ${Model.currentUser.firstName}</div>
+    <img src="IMG/back.png" class="employeeBackButton" height=40px onclick="goToStore()">
     ${showSortButtonsAdmin()}
     <div class="storeMessage">${Model.input.errorMessage}</div>
+    <div class="storeMessage">${Model.app.html.quantity}</div>
     <div class="employeeContainer">
         ${createAddProducts() ?? ''}
         ${createNewEmployee() ?? ''}
@@ -16,6 +18,7 @@ async function updateEmployeeView() {
         </div>
     `;
 }
+
 function createAddProducts() {
     if (Model.app.dropdown.isAdding)
         return `
@@ -39,12 +42,13 @@ function createAddProducts() {
     </div>
     `;
 }
+
 async function editEmployee() {
-    if(!Model.app.dropdown.isEditEmployee) return '';
+    if (!Model.app.dropdown.isEditEmployee) return '';
     else {
-    let found = await axios.get(`/users/${Model.app.html.editUser}`);
-    Model.input.editUser = found.data;
-    let html = `
+        let found = await axios.get(`/users/${Model.app.html.editUser}`);
+        Model.input.editUser = found.data;
+        let html = `
     <div class="addProducts">
         <h3>Endre ansatt</h3>
         <input type="text" placeholder="${Model.input.editUser.firstName}" onchange="Model.input.register.firstname=this.value" />    
@@ -57,9 +61,10 @@ async function editEmployee() {
         <button onclick="closeEditEmployee()">Avbryt</button>
     </div>
     `;
-    return html;
+        return html;
     }
 }
+
 function createNewEmployee() {
     if (Model.app.dropdown.isAddEmployee)
         return `
@@ -76,6 +81,7 @@ function createNewEmployee() {
     </div>
     `;
 }
+
 function showSortButtonsAdmin() {
     let html = '';
     for (let i = 0; i < Model.app.category.length; i++) {
@@ -94,6 +100,7 @@ function showSortButtonsAdmin() {
     </div>
     `;
 }
+
 async function showAllUsers() {
     let response = await axios.get(`/users`)
     let users = await response.data;
@@ -109,7 +116,7 @@ async function showAllUsers() {
         </tr>
     `;
     for (let user of users) {
-            Model.app.html.productHtml += `
+        Model.app.html.productHtml += `
             <tr>
                 <td>${user.id}</td>
                 <td>${user.firstName} ${user.lastName}</td>
@@ -118,11 +125,12 @@ async function showAllUsers() {
                 <td><button onclick="blockUser(${user.id})">Blokker</button></td>
             </tr>
             `;
-        
+
     }
     Model.app.html.productHtml += `</table>`;
     closeAllDropEmployee();
 }
+
 async function showEmployee() {
     let response = await axios.get(`/users`)
     let users = await response.data;
@@ -145,7 +153,7 @@ async function showEmployee() {
                 <td>${user.firstName} ${user.lastName}</td>
                 <td>${user.address}</td>
                 <td>${user.city}</td>
-                <td>${Model.currentUser.isAdmin ? `<button onclick="openEditEmployee(${user.id})">Endre</button> <button onclick="removeEmployee(${user.id})">Slett</button>` : ''}</td>
+                <td>${Model.currentUser.isAdmin ? `<button onclick="openEditEmployee(${user.id})">Endre</button> <button onclick="removeEmployee(${user.id})">Fjerne</button>` : ''}</td>
             </tr>
             `;
         }
@@ -199,12 +207,15 @@ async function showPendingOrders() {
 
 function GetInnerItems(order, orderItemsHtml) {
     for (let item of order.orderItems) {
+        let discountPercentage = item.priceModifier.toFixed(2).split('.')[1];
+        let checkSale = item.isOnSale ? `-${discountPercentage}%` : "";
         orderItemsHtml += `
                 <div class="orderItem">
                     <img src="${item.imageUrl}" alt="${item.nameOfProduct}" class="orderItemImage" />
                     <span>${item.nameOfProduct}</span>
                     <span>Antall: ${item.stock}</span>
                     <span>Pris: ${item.price} kr</span>
+                    <span>${checkSale}</span>
                 </div>
             `;
     }
@@ -223,6 +234,21 @@ function getTopTableOrders() {
          </tr>
          `;
 }
+function SetSaleQuantity(itemId,input) {
+    Model.app.html.quantity = `
+    <div class="qty">
+        <div>Hvor mange vil du legge til?</div>
+        <div class="innerqtybuttons">
+            <button onclick="Model.input.inputQty=1.1; setPercent(${itemId},${input})">10</button>
+            <button onclick="Model.input.inputQty=1.15; setPercent(${itemId},${input})">15</button>
+            <button onclick="Model.input.inputQty=1.20; setPercent(${itemId},${input})">20</button>
+            <button onclick="Model.input.inputQty=1.25; setPercent(${itemId},${input})">25</button>
+            <button onclick="CloseQuantity()">Avbryt</button>
+        </div>
+    </div>
+    `;
+    updateView();
+}
 
 async function sortByCategoryAdmin(input) {
     let response = await axios.get('/products');
@@ -230,6 +256,8 @@ async function sortByCategoryAdmin(input) {
     let result;
     if (input === 7) {
         result = Model.input.productItems;
+    } else if(input === 8) {
+        result = Model.input.productItems.filter(item => item.isOnSale);
     } else {
         let index = Model.app.category[input];
         result = Model.input.productItems.filter(item => item.typeOfProduct === index);
@@ -240,14 +268,21 @@ async function sortByCategoryAdmin(input) {
             `<input type="number" placeholder="Nytt antall" onInput="Model.input.inputStock=this.value"/> 
              <button onclick="addInventoryAdmin(${item.id},${input})">Bekreft</button>` :
             `<button class="addInventoryBtn" onclick="Model.app.dropdown.editMode='${item.nameOfProduct}'; sortByCategoryAdmin(${input})">Sett antall</button>`;
+       
+        let saleprice = item.price / item.priceModifier;
+        let discountPercentage = item.priceModifier.toFixed(2).split('.')[1];
+        let checkSale = item.isOnSale ? `<td><div>Ordinær pris: ${item.price} kr</div><br><br><div style="color: red"> Tilbud: ${saleprice.toFixed(2)} kr</div></td>` : `<td>Pris: ${item.price} kr</td>`;
         productHtml += `
             <tr class="productRow">
                 <td>${item.nameOfProduct}</td>
                 <td class="innerImg"><img src="${item.imageUrl}" height="100px" width="100px" /></td>
-                <td>${item.price} kr</td>
+                ${checkSale}
+                <td>-${discountPercentage}%</td>
                 <td>${item.stock}</td>
                 <td>
                     ${setInventory}
+                    <button class="addInventoryBtn" onclick="SetSaleQuantity(${item.id},${input})">Sett salgprosent</button>
+                    <button class="addInventoryBtn" onclick="setSaleOnOff(${item.id},${input})">Sett salg</button>
                     <button class="deleteItemBtn" style="background-color: red" onclick="deleteItemAdmin(${item.id},${input})">Slett produkt</button>
                 </td>
             </tr>
@@ -261,6 +296,7 @@ async function sortByCategoryAdmin(input) {
                     <th>Navn</th>
                     <th>Bilde</th>
                     <th>Pris</th>
+                    <th>Rabatt</th>
                     <th>Tilgjengelig</th>
                     <th>Handlinger</th>
                 </tr>

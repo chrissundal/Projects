@@ -12,11 +12,13 @@
     gap: 10px;
     border-radius: 10px;
 }
+
 .employeeContainer {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .productTable {
     width: 100%;
     border-collapse: collapse;
@@ -53,4 +55,26 @@
     background-color: red;
     color: white;
 }
+.employeeBackButton {
+    cursor: pointer;
+    position: absolute;
+    z-index: 2;
+    top: 10px;
+    left: 40px;
+    border: none;
+    padding: 10px;
+    transition: 0.4s ease;
+}
 
+.employeeBackButton:hover {
+    transform: scale(1.05);
+}
+.employeeName {
+    position: absolute;
+    z-index: 2;
+    top: 30px;
+    left: 150px;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}

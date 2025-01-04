@@ -8,7 +8,8 @@ let Model = {
             "Leker",
             "Sport",
             "Diverse",
-            "Alle"
+            "Alle",
+            "Salg"
         ],
         dropdown: {
             isOpen: false,

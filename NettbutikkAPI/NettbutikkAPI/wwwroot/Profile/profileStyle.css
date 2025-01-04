@@ -48,3 +48,12 @@
 .orderItem span:nth-child(2) {
     font-weight: bold;
 }
+.profileHeader {
+    color: white;
+    position: absolute;
+    z-index: 2;
+    top: 30px;
+    left: 100px;
+    font-size: large;
+    font-weight: bold;
+}

@@ -11,10 +11,9 @@ async function checklogin() {
         let response = await axios.post('/login', {UserName: username, PassWord: password});
         if (response.status === 200) {
             Model.currentUser = response.data;
-            if(Model.currentUser.isBanned) {
+            if (Model.currentUser.isBanned) {
                 goToBanned();
-            }
-            else {
+            } else {
                 displayWelcomeMessage(`Velkommen ${Model.currentUser.firstName}`);
                 Model.input.login.username = '';
                 Model.input.login.password = '';

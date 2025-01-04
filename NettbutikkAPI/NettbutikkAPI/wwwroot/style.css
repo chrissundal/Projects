@@ -14,6 +14,7 @@ body {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    height: 60px;
 }
 
 .grid {
@@ -87,13 +88,13 @@ body {
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 15px;
-    margin: 10px 0;
+    padding: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s;
     text-align: center;
     width: 170px;
     height: 280px;
+    position: relative;
 }
 
 .products:hover {
@@ -107,7 +108,7 @@ body {
 }
 
 .innerImg {
-    height: 150px;
+    height: 135px;
     padding: 10px;
 }
 
@@ -115,21 +116,23 @@ body {
     border-radius: 5px;
     height: 80%;
     max-height: 170px;
+    max-width: 150px;
 }
 
 .addToCartBtn {
-    margin-top: 5px;
     color: white;
     border: none;
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    display: none; 
+    position: absolute;
+    bottom: 10px;
+    left: 50%; 
+    transform: translateX(-50%);
 }
-
-.addToCartBtn:hover {
-    background-color: #218838;
-}
+.products:hover .addToCartBtn { 
+    display: block; }
 
 .borderBottomProduct {
     border-top: 2px solid #ddd;
@@ -170,7 +173,7 @@ button:hover {
 
 .dropDown {
     position: absolute;
-    top: 100px;
+    top: 80px;
     right: 0px;
     background-color: white;
     border: 1px solid #ddd;
@@ -216,7 +219,7 @@ button:hover {
 
 .cartButton {
     position: relative;
-    top: 10px;
+    top: 0px;
     right: 60px;
     border: none;
     padding: 10px;
@@ -226,7 +229,7 @@ button:hover {
     cursor: pointer;
     position: absolute;
     z-index: 2;
-    top: 12px;
+    top: 2px;
     left: 100px;
     border: none;
     padding: 10px;
@@ -241,7 +244,7 @@ button:hover {
     cursor: pointer;
     position: absolute;
     z-index: 2;
-    top: 10px;
+    top: 0px;
     left: 30px;
     border: none;
     padding: 10px;
@@ -256,7 +259,7 @@ button:hover {
     cursor: pointer;
     position: absolute;
     z-index: 2;
-    top: 20px;
+    top: 10px;
     right: 150px;
     border: none;
     padding: 10px;
@@ -269,7 +272,7 @@ button:hover {
 
 .cartCounter {
     position: absolute;
-    top: 40px;
+    top: 30px;
     right: 50px;
     font-size: large;
     color: white;
@@ -305,10 +308,24 @@ footer a:hover {
 .productsCategoryText {
     text-align: center;
 }
+
 .banned {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
+}
+.sale {
+    position: absolute;
+    z-index: 2;
+    transform: scale(0.4);
+    bottom: 160px;
+    left: 75px;
+}
+.discountPercent {
+    position: absolute;
+    z-index: 2;
+    bottom: 245px;
+    color: red;
 }

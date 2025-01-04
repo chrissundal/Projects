@@ -19,10 +19,10 @@ public class OrderManager
         {
             _orders =
             [
-                new Order(1, 0, 106,
+                new Order(1, 0, 107.8,
                 [
-                    new Product(1, "Dusjhette", "Clothing", 99, 1, "IMG/productIMG/showercap.jpg"),
-                    new Product(8, "Eple", "Food", 7, 1, "IMG/productIMG/eple.jpg")
+                    new Product(1, "Dusjhette", "Clothing", 99.90, 1, "IMG/productIMG/showercap.jpg",false,1.1),
+                    new Product(8, "Eple", "Food", 7.90, 1, "IMG/productIMG/eple.jpg",false,1.1)
                 ], 0)
             ];
         }
