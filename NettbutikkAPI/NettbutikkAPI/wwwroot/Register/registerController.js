@@ -61,6 +61,7 @@ async function addUser() {
         isEmployee: false,
         isAdmin: false,
         isBanned: false,
+        isDeleted: false,
     };
     Model.currentUser = idNumber;
     await axios.post('/users', newUser);

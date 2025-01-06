@@ -34,9 +34,14 @@ app.MapGet("/users", () => userManager.GetUsers());
 app.MapGet("/users/{id:int}", (int id) =>
 {
     var user = userManager.GetUserById(id);
-    if (user != null) return Results.Ok(user);
-
-    return Results.NotFound("User not found");
+    if (user != null)
+    {
+        return Results.Ok(user);
+    }
+    else
+    {
+        return Results.NotFound("User not found");
+    }
 });
 app.MapGet("/check-username/{username}", (string username) =>
 {
@@ -55,14 +60,15 @@ app.MapPost("/login", (LoginRequest loginRequest) =>
     Console.WriteLine(
         $"Received login attempt with Username: {loginRequest.UserName}, Password: {loginRequest.PassWord}");
     var user = userManager.ValidateLogin(loginRequest.UserName, loginRequest.PassWord);
-    if (user != null) return Results.Ok(user);
-
-    return Results.Unauthorized();
-});
-app.MapDelete("/users/{id:int}", (int id) =>
-{
-    userManager.RemoveUserById(id);
-    return Results.NoContent();
+    if (user != null)
+    {
+        return Results.Ok(user);
+    }
+    else
+    {
+        Console.WriteLine("Invalid username or password");
+        return Results.Unauthorized();
+    }
 });
 //orders
 

@@ -21,6 +21,7 @@ async function addEmployee() {
         isEmployee: true,
         isAdmin: false,
         isBanned: false,
+        isDeleted: false,
     };
     await axios.post('/users', newUser);
     Model.app.dropdown.isAddEmployee = false;
@@ -119,8 +120,40 @@ async function blockUser(userId) {
     user.isBanned = true;
     await axios.put(`/users/${user.id}`, user);
     displayWelcomeMessage(`${user.firstName} ${user.lastName} er blokkert!`);
+    await showAllUsers()
 }
-
+async function unBlockUser(userId) {
+    let response = await axios.get(`/users/${userId}`);
+    let user = response.data;
+    user.isBanned = false;
+    await axios.put(`/users/${user.id}`, user);
+    displayWelcomeMessage(`${user.firstName} ${user.lastName}'s konto er åpnet igjen!`);
+    await showAllUsers()
+}
+async function deleteUser(userId) {
+    let response = await axios.get(`/users/${userId}`);
+    let user = response.data;
+    for (let itemInCart of user.myCart) {
+        let product = Model.input.productItems.find(p => p.id === itemInCart.id);
+        if (product) {
+            product.stock += itemInCart.stock;
+            await axios.put(`/products/${product.id}`, product);
+        }
+    }
+    user.isDeleted = true;
+    user.myCart = [];
+    await axios.put(`/users/${userId}`, user);
+    displayWelcomeMessage(`${user.firstName} ${user.lastName} er slettet!`);
+    await showAllUsers();
+}
+async function unDeleteUser(userId) {
+    let response = await axios.get(`/users/${userId}`);
+    let user = response.data;
+    user.isDeleted = false;
+    await axios.put(`/users/${user.id}`, user);
+    displayWelcomeMessage(`${user.firstName} ${user.lastName}'s konto er åpnet igjen!`);
+    await showAllUsers()
+}
 function openEditEmployee(userId) {
     Model.app.dropdown.isEditEmployee = true;
     Model.app.dropdown.isAddEmployee = false;
@@ -162,7 +195,7 @@ async function updateEmployee() {
 }
 
 async function addInventoryAdmin(itemId, input) {
-    let product = Model.input.productItems[itemId]
+    let product = Model.input.productItems.find(item => item.id === itemId);
     product.stock = Model.input.inputStock;
     Model.input.inputStock = 0;
     Model.app.dropdown.editMode = '';
@@ -200,8 +233,9 @@ async function cancelOrder(orderId) {
 
 async function deleteItemAdmin(itemId, input) {
     if (confirm('Er du sikker?') == true) {
-        Model.input.productItems.splice(itemId, 1);
-        await axios.delete(`/products/${itemId}`);
+        let index = Model.input.productItems.findIndex(item => item.id === itemId);
+        Model.input.productItems.splice(index, 1);
+        await axios.delete(`/products/${index}`);
         await sortByCategoryAdmin(input);
     }
 }

@@ -74,5 +74,6 @@ let Model = {
         isEmployee: true,
         isAdmin: true,
         isBanned: false,
+        isDeleted: false,
     }
 }

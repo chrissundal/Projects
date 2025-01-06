@@ -13,6 +13,7 @@
                 <th>Total Pris</th>
                 <th></th>
                 <th>Ordre Status</th>
+                <th></th>
             </tr>
             <tbody>
                 ${await showAllOrders()}
@@ -68,7 +69,8 @@ async function showAllOrders() {
                     <td>${order.orderId}</td>
                     <td>${order.totalPrice} kr</td>
                     <td>${orderItemsHtml}</td>
-                    <td>${statusText ? statusText : ordercheck}</td>
+                    <td>${statusText}</td>
+                    <td>${ordercheck}</td>
                 </tr>
             `;
         }

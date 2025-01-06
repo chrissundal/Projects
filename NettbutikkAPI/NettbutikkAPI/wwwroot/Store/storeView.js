@@ -47,7 +47,7 @@ async function sortBy(input) {
     Model.input.productItems = response.data;
     if (input === 7) {
         let saleProducts = Model.input.productItems.filter(item => item.isOnSale);
-        buildProductHtml(saleProducts, input, 8);
+        buildProductHtml(saleProducts, input, 8);  
         for (let i = 0; i < Model.app.category.length-2; i++) {
             let categoryItems = Model.input.productItems.filter(item => item.typeOfProduct === Model.app.category[i]);
             if (categoryItems.length == 0) {

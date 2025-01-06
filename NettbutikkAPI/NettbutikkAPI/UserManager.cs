@@ -17,8 +17,8 @@ public class UserManager
         {
             _users =
             [
-                new Person("Chris", "Jacobsen", "c", "1", "Svingen 2", "Larvik", 0, new List<Product>(), true, true,false),
-                new Person("Bjarne", "Hansen", "b", "1", "Torget 7", "Sandefjord", 1, new List<Product>(), false, false,false)
+                new Person("Chris", "Jacobsen", "c", "1", "Svingen 2", "Larvik", 0, new List<Product>(), true, true,false,false),
+                new Person("Bjarne", "Hansen", "b", "1", "Torget 7", "Sandefjord", 1, new List<Product>(), false, false,false,false)
             ];
         }
     }
@@ -69,19 +69,4 @@ public class UserManager
         var updatedJson = JsonSerializer.Serialize(_users);
         File.WriteAllText("users.json", updatedJson);
     }
-
-    public void RemoveUserById(int id)
-    {
-        var userToRemove = _users.FirstOrDefault(u => u.Id == id);
-        if (userToRemove != null)
-        {
-            _users.Remove(userToRemove);
-            SaveUsers();
-        }
-        else
-        {
-            Console.WriteLine($"User with id {id} not found.");
-        }
-    }
-
 }

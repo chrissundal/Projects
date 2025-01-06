@@ -105,7 +105,7 @@ async function showAllUsers() {
     let response = await axios.get(`/users`)
     let users = await response.data;
     Model.app.html.productHtml = `
-    <h3>Ansatte</h3>
+    <h3>Brukere</h3>
     <table class="ordersTable">
         <tr>
              <th>Id nummer</th>
@@ -116,13 +116,23 @@ async function showAllUsers() {
         </tr>
     `;
     for (let user of users) {
+        let checkBlock = user.isBanned ? `<button onclick="unBlockUser(${user.id})">Fjern Blokkering</button>` : `<button onclick="blockUser(${user.id})">Blokker</button>`;
+        let checkDelete = user.isDeleted ? `<button onclick="unDeleteUser(${user.id})">Gjennopprett bruker</button>` : `<button onclick="deleteUser(${user.id})">Slett</button>`;
+        let status = '';
+        if(user.isDeleted) {status = "Bruker slettet";}
+        else if(user.isBanned) {status = "Bruker blokkert";}
+        else {status = ""}
         Model.app.html.productHtml += `
             <tr>
                 <td>${user.id}</td>
                 <td>${user.firstName} ${user.lastName}</td>
                 <td>${user.address}</td>
                 <td>${user.city}</td>
-                <td><button onclick="blockUser(${user.id})">Blokker</button></td>
+                <td>${status}</td>
+                <td>
+                ${checkBlock}
+                ${checkDelete}
+                </td>
             </tr>
             `;
 
@@ -255,7 +265,7 @@ async function sortByCategoryAdmin(input) {
     Model.input.productItems = response.data;
     let result;
     if (input === 7) {
-        result = Model.input.productItems;
+        result = Model.input.productItems.sort((a, b) => a.typeOfProduct.localeCompare(b.typeOfProduct));
     } else if(input === 8) {
         result = Model.input.productItems.filter(item => item.isOnSale);
     } else {

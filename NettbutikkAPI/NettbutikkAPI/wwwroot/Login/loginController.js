@@ -9,23 +9,24 @@ async function checklogin() {
     let password = Model.input.login.password;
     try {
         let response = await axios.post('/login', {UserName: username, PassWord: password});
-        if (response.status === 200) {
             Model.currentUser = response.data;
             if (Model.currentUser.isBanned) {
                 goToBanned();
+                Model.currentUser = null;
+            } else if (Model.currentUser.isDeleted){
+                displayErrorMessage("Bruker er slettet")
+                Model.currentUser = null;
             } else {
                 displayWelcomeMessage(`Velkommen ${Model.currentUser.firstName}`);
-                Model.input.login.username = '';
-                Model.input.login.password = '';
+                clearLoginInputs()
                 await goToStore();
             }
-        } else {
-            Model.input.errorMessage = 'Ugyldig passord eller brukernavn';
-            updateView();
-        }
     } catch (error) {
-        console.error("Error during login:", error);
-        Model.input.errorMessage = 'Failed to login';
-        updateView();
+        clearLoginInputs()
+        displayErrorMessage("Ugyldig passord eller brukernavn")
     }
+}
+function clearLoginInputs() {
+    Model.input.login.username = '';
+    Model.input.login.password = '';
 }
