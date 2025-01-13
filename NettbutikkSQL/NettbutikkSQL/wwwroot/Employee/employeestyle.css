@@ -1,0 +1,80 @@
+.addProducts {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 400px;
+    width: 400px;
+    background-color: gray;
+    z-index: 3;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+}
+
+.employeeContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.productTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.productTable th, .productTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.productTable th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.setInventoryBtn, .addInventoryBtn, .deleteItemBtn {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.setInventoryBtn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.addInventoryBtn {
+    background-color: #008CBA;
+    color: white;
+}
+
+.deleteItemBtn {
+    background-color: red;
+    color: white;
+}
+.employeeBackButton {
+    cursor: pointer;
+    position: absolute;
+    z-index: 2;
+    top: 10px;
+    left: 40px;
+    border: none;
+    padding: 10px;
+    transition: 0.4s ease;
+}
+
+.employeeBackButton:hover {
+    transform: scale(1.05);
+}
+.employeeName {
+    position: absolute;
+    z-index: 2;
+    top: 30px;
+    left: 150px;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}

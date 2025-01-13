@@ -33,7 +33,7 @@ let Model = {
             "Register",
             "Banned"
         ],
-        currentPage: "Login"
+        currentPage: "Store"
     },
     input: {
         editUser: '',
@@ -62,6 +62,7 @@ let Model = {
         productItems: []
     },
     orders: [],
+    cart: [],
     currentUser: {
         firstName: "Chris",
         lastName: "Jacobsen",
@@ -69,7 +70,7 @@ let Model = {
         passWord: "1",
         address: "Svingen 2",
         city: "Larvik",
-        id: 0,
+        id: 1,
         myCart: [],
         isEmployee: true,
         isAdmin: true,
