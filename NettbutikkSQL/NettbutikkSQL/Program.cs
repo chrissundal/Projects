@@ -1,5 +1,6 @@
  using NettbutikkSQL;
  using Dapper;
+ using Microsoft.AspNetCore.Mvc;
  using Microsoft.Data.SqlClient;
 
  var builder = WebApplication.CreateBuilder(args);
@@ -16,32 +17,19 @@
          var products = await conn.QueryAsync<Product>(sql);
          return products;
  });
- app.MapGet("/orders/{id:int}", async (int id) =>
- {
-         var sql = "SELECT * FROM Orders WHERE UserId = @UserId";
-         var conn = new SqlConnection(connStr);
-         var ordersItems = new List<Product>();
-         var results = await conn.QueryAsync<dynamic>(sql, new { UserId = id });
-         foreach (var result in results)
-         {
-             var product = new Product(result.Id, result.NameOfProduct, result.TypeOfProduct, result.Price,
-                 result.Quantity, result.ImageUrl, result.IsOnSale, result.PriceModifier);
-             ordersItems.Add(product);
-         }
-         return Results.Ok(ordersItems);
- }); 
+ 
  app.MapGet("/orders", async () =>
  {
         var sql = "SELECT * FROM Orders";
         var sqlOrderItems = "SELECT * FROM OrderItems";
         var conn = new SqlConnection(connStr);
         var ordersList = new List<Order>();
-        var OrderItemsList = await conn.QueryAsync<OrderItem>(sqlOrderItems);
+        var orderItemsList = await conn.QueryAsync<OrderItem>(sqlOrderItems);
         var results = await conn.QueryAsync<dynamic>(sql);
          foreach (var result in results)
          {
              var ordersItems = new List<OrderItem>();
-             foreach (var orderItem in OrderItemsList)
+             foreach (var orderItem in orderItemsList)
              {
                  if (orderItem.OrderId == result.OrderId)
                  {
@@ -69,7 +57,7 @@
  });
  app.MapGet("/users/{id:int}/cart", async (int id) =>
  {
-     var sql = "SELECT p.*, c.Quantity FROM Cart c JOIN Products p ON c.ProductId = p.Id WHERE c.UserId = @UserId";
+     var sql = "SELECT prod.*, cart.Quantity FROM Cart cart JOIN Products prod ON cart.ProductId = prod.Id WHERE cart.UserId = @UserId";
      var conn = new SqlConnection(connStr);
          var cartItems = new List<Product>();
          var results = await conn.QueryAsync<dynamic>(sql, new { UserId = id });
@@ -102,12 +90,66 @@
      return Results.Ok("Cart item updated successfully.");
      
  });
- app.MapPut("/products/{id:int}", async (int id, Product updatedProduct) =>
+ app.MapPut("/products/{id:int}", async (Product updatedProduct) =>
      {
         string sql = "UPDATE Products SET Stock = @Stock, PriceModifier = @PriceModifier, IsOnSale = @IsOnSale WHERE Id = @Id"; 
         var conn = new SqlConnection(connStr);
         var rowsAffected = await conn.ExecuteAsync(sql, updatedProduct);
         return rowsAffected;
      });
+ app.MapPut("/orders", async (Order updatedOrder) =>
+     {
+        string sql = "UPDATE Orders SET Status = @Status WHERE OrderId = @OrderId"; 
+        var conn = new SqlConnection(connStr);
+        var rowsAffected = await conn.ExecuteAsync(sql, updatedOrder);
+        return rowsAffected;
+     });
+ 
+ //post
+ app.MapPost("/orders", async (Order order) =>
+{
+        var orderSql = @"
+        INSERT INTO Orders VALUES (@UserId, @TotalPrice, @Status);
+        SELECT SCOPE_IDENTITY();";
+
+        var orderItemSql = "INSERT INTO OrderItems VALUES (@OrderId, @ProductId, @ProductName, @Quantity, @Price);";
+        var conn = new SqlConnection(connStr);
+        var orderId = await conn.ExecuteScalarAsync<int>(orderSql, new 
+        {
+            UserId = order.UserId,
+            TotalPrice = order.TotalPrice,
+            Status = order.Status
+        });
+        foreach (var item in order.OrderItems)
+        {
+            await conn.ExecuteAsync(orderItemSql, new 
+            {
+                OrderId = orderId,
+                ProductId = item.ProductId,
+                ProductName = item.ProductName,
+                Quantity = item.Quantity,
+                Price = item.Price
+            });
+        }
+        return Results.Ok("Order placed successfully.");
+});
+
+
+//delete
+ app.MapDelete("/cart", async ([FromBody] CartItem cartItem) =>
+ {
+     var sql = "DELETE FROM Cart WHERE UserId = @UserId AND ProductId = @ProductId";
+     var conn = new SqlConnection(connStr);
+     var rowsAffected = await conn.ExecuteAsync(sql, cartItem);
+     if (rowsAffected > 0)
+     {
+         return Results.Ok($"{cartItem.ProductId} ble slettet");
+     }
+     else
+     {
+         return Results.NotFound("Cart item not found.");
+     }
+ });
+
 
 app.Run();

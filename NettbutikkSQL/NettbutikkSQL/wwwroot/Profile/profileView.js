@@ -30,9 +30,8 @@
 async function showAllOrders() {
     let response = await axios.get(`/orders`);
     let orders = response.data;
-    Model.orders = orders;
     let html = '';
-    let myOrders = Model.orders.filter(order => order.userId === Model.currentUser.id);
+    let myOrders = orders.filter(order => order.userId === Model.currentUser.id);
     if (myOrders.length > 0) {
         for (let order of myOrders) {
             let orderItemsHtml = '';

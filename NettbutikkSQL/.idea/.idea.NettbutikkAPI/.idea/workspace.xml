@@ -11,12 +11,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0e9e8e93-c74e-4a9f-92dc-13e461f93e3f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/NettbutikkSQL/CartItem.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/NettbutikkSQL/NettbutikkSQL.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/NettbutikkSQL/OrderItem.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../NettbutikkAPI/NettbutikkAPI/wwwroot/model.js" beforeDir="false" afterPath="$PROJECT_DIR$/../NettbutikkAPI/NettbutikkAPI/wwwroot/model.js" afterDir="false" />
-    </list>
+    <list default="true" id="0e9e8e93-c74e-4a9f-92dc-13e461f93e3f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -154,7 +149,7 @@
       <workItem from="1736147931022" duration="23780000" />
       <workItem from="1736243365229" duration="1037000" />
       <workItem from="1736340264273" duration="7823000" />
-      <workItem from="1736761785486" duration="36129000" />
+      <workItem from="1736761785486" duration="36282000" />
     </task>
     <task id="LOCAL−00001" summary="f">
       <option name="closed" value="true" />
@@ -240,7 +235,14 @@
       <option name="presentableId" value="LOCAL−00012" />
       <updated>1736179556125</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL−00013" summary="SQL">
+      <option name="closed" value="true" />
+      <created>1736798146033</created>
+      <option name="number" value="LOCAL−00013" />
+      <option name="presentableId" value="LOCAL−00013" />
+      <updated>1736798146033</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -260,6 +262,7 @@
     <MESSAGE value="update employee" />
     <MESSAGE value="added selectable store sales and lot of improvements" />
     <MESSAGE value="delete users, fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="delete users, fixes" />
+    <MESSAGE value="SQL" />
+    <option name="LAST_COMMIT_MESSAGE" value="SQL" />
   </component>
 </project>

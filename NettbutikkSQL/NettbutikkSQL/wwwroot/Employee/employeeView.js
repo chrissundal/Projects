@@ -175,9 +175,10 @@ async function showEmployee() {
 async function showPendingOrders() {
     let orderResponse = await axios.get(`/orders`);
     let orders = orderResponse.data;
-    Model.orders = orders;
+    let response = await axios.get('/products');
+    Model.input.productItems = response.data;
     Model.app.html.productHtml = `${getTopTableOrders()}`;
-    let sortedOrders = Model.orders.sort((a, b) => a.status - b.status);
+    let sortedOrders = orders.sort((a, b) => a.status - b.status);
     for (let order of sortedOrders) {
         let orderItemsHtml = '';
         let response = await axios.get(`/users/${order.userId}`);

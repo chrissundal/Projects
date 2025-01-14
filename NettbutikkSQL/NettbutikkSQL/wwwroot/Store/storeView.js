@@ -42,6 +42,7 @@ function showButtons() {
 }
 
 async function sortBy(input) {
+    Model.input.pageNumber = input;
     Model.app.html.storeItems = '';
     let response = await axios.get('/products');
     Model.input.productItems = response.data;
@@ -57,16 +58,15 @@ async function sortBy(input) {
                 <br><div class="borderBottomProduct"></div>
             `;
             }
-            buildProductHtml(categoryItems, input, i);
+            buildProductHtml(categoryItems, i);
         }
     } else if (input === 8) {
         let saleProducts = Model.input.productItems.filter(item => item.isOnSale);
         if (saleProducts) {
-            let i = input;
-            buildProductHtml(saleProducts, input, i);
+            buildProductHtml(saleProducts, input);
         } else {
             Model.app.html.storeItems = `
-                <h3>${Model.app.category[i]}</h3>
+                <h3>${Model.app.category[input]}</h3>
                 <div>Her var det tomt</div>
                 <br><div class="borderBottomProduct"></div>
             `;
@@ -74,21 +74,20 @@ async function sortBy(input) {
         }
     } else {
         let sortedProducts = Model.input.productItems.filter(item => item.typeOfProduct === Model.app.category[input]);
-        let i = input;
-        buildProductHtml(sortedProducts, input, i);
+        buildProductHtml(sortedProducts, input);
     }
     updateView();
 }
 
-function GetQuantity(itemId, input,price) {
+function GetQuantity(itemId, price) {
     Model.app.html.quantity = `
     <div class="qty">
         <div>Hvor mange vil du legge til?</div>
         <div class="innerqtybuttons">
-            <button onclick="Model.input.inputQty=1; addToCart(${itemId}, ${input}, ${price})">1</button>
-            <button onclick="Model.input.inputQty=2; addToCart(${itemId}, ${input}, ${price})">2</button>
-            <button onclick="Model.input.inputQty=5; addToCart(${itemId}, ${input}, ${price})">5</button>
-            <button onclick="Model.input.inputQty=10; addToCart(${itemId}, ${input}, ${price})">10</button>
+            <button onclick="Model.input.inputQty=1; addToCart(${itemId}, ${price})">1</button>
+            <button onclick="Model.input.inputQty=2; addToCart(${itemId}, ${price})">2</button>
+            <button onclick="Model.input.inputQty=5; addToCart(${itemId}, ${price})">5</button>
+            <button onclick="Model.input.inputQty=10; addToCart(${itemId}, ${price})">10</button>
             <button onclick="CloseQuantity()">Avbryt</button>
         </div>
     </div>
@@ -102,7 +101,7 @@ function CloseQuantity() {
     updateView();
 }
 
-function buildProductHtml(sortedProducts, input, i) {
+function buildProductHtml(sortedProducts, i) {
     if (sortedProducts.length > 0) {
         let html = '';
         for (let item of sortedProducts) {
@@ -110,7 +109,7 @@ function buildProductHtml(sortedProducts, input, i) {
             let price = item.isOnSale ? saleprice : item.price;
             
             let discountPercentage = item.priceModifier.toFixed(2).split('.')[1];
-            let checkstock = item.stock > 0 ? `<button class="addToCartBtn" onclick="GetQuantity(${item.id},${input},${price})">add to cart</button>` : '';
+            let checkstock = item.stock > 0 ? `<button class="addToCartBtn" onclick="GetQuantity(${item.id},${price})">add to cart</button>` : '';
             let checkSale = item.isOnSale ? `<div>Før: ${item.price} kr</div> <div style="color: red">Tilbud: ${saleprice.toFixed(2)} kr</div>` : `<div>Pris: ${item.price} kr</div>`;
             let isSale = item.isOnSale ? `<img src="IMG/sale.png" class="sale"/> <div class="discountPercent">-${discountPercentage}%</div>` : '';
             html += `
@@ -171,7 +170,7 @@ function createCartItems() {
             <img src="${Model.cart[cartIndex].imageUrl}" height = 50px width = 50px/>
             <div>${Model.cart[cartIndex].nameOfProduct}</div>
             <div ${checkSale}>Pris: ${Model.cart[cartIndex].price} kr</div>
-            <button onclick="deleteItem(${cartIndex})">X</button>
+            <button onclick="deleteItem(${Model.cart[cartIndex].id})">X</button>
         </div>
         `;
     }

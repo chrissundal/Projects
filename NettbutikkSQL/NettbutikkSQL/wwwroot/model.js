@@ -36,6 +36,7 @@ let Model = {
         currentPage: "Store"
     },
     input: {
+        pageNumber: 7,
         editUser: '',
         errorMessage: '',
         inputQty: 0,
@@ -61,7 +62,6 @@ let Model = {
         },
         productItems: []
     },
-    orders: [],
     cart: [],
     currentUser: {
         firstName: "Chris",

@@ -99,17 +99,32 @@ async function addItems() {
 
 //modify
 
+async function RemoveItemsOrder(foundOrder) {
+    for (let itemInOrder of foundOrder.orderItems) {
+        let product = Model.input.productItems.find(p => p.id === itemInOrder.productId);
+        if (product) {
+            product.stock += itemInOrder.quantity;
+            await updateProduct(product);
+        }
+        else {
+            console.log("ikke noe her");
+        }
+    }
+}
+
 async function changeOrder(orderId, input) {
-    let foundOrder = Model.orders.find(order => order.orderId === orderId);
+    let orderResponse = await axios.get(`/orders`);
+    let orders = orderResponse.data;
+    let foundOrder = orders.find(order => order.orderId === orderId);
     foundOrder.status = input;
     await axios.put('/orders', foundOrder);
     if (input == 1) {
         await showPendingOrders();
     } else if (input == 2) {
-        await cancelOrder(orderId)
+        await RemoveItemsOrder(foundOrder);
         await showPendingOrders();
     } else if (input == 3) {
-        await cancelOrder(orderId)
+        await RemoveItemsOrder(foundOrder);
         updateView();
     }
 }
@@ -141,7 +156,6 @@ async function deleteUser(userId) {
         }
     }
     user.isDeleted = true;
-    user.myCart = [];
     await axios.put(`/users/${userId}`, user);
     displayWelcomeMessage(`${user.firstName} ${user.lastName} er slettet!`);
     await showAllUsers();
@@ -199,25 +213,25 @@ async function addInventoryAdmin(itemId, input) {
     product.stock = Model.input.inputStock;
     Model.input.inputStock = 0;
     Model.app.dropdown.editMode = '';
-    await updateServerData(product);
+    await updateProduct(product)
     await sortByCategoryAdmin(input);
 }
 async function setSaleOnOff(itemId,input) {
     let product = Model.input.productItems.find(item => item.id === itemId);
     if (product) {
         product.isOnSale = !product.isOnSale;
-        await axios.put(`/products/${product.id}`, product);
+        await updateProduct(product)
         await sortByCategoryAdmin(input);
     }
     else {
-        console.error("Product not found.");
+        console.error("Produkt ikke funnet.");
     }
 }
 async function setPercent(itemId, input) {
     let product = Model.input.productItems.find(item => item.id === itemId);
     product.priceModifier = Model.input.inputQty;
     Model.app.html.quantity = '';
-    await axios.put(`/products/${product.id}`, product);
+    await updateProduct(product)
     await sortByCategoryAdmin(input);
 }
 async function cancelOrder(orderId) {
@@ -226,7 +240,7 @@ async function cancelOrder(orderId) {
         if (foundOrder) {
             await axios.put(`/orders/${orderId}`);
         } else {
-            alert("Order not found.");
+            alert("Ordere ikke funnet.");
         }
     }
 }
