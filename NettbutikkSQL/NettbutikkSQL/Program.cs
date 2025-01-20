@@ -69,8 +69,6 @@
          }
          return Results.Ok(cartItems);
  });
-
-
 //put
 
  app.MapPut("/cart", async (CartItem cartItem) =>
@@ -133,7 +131,22 @@
         }
         return Results.Ok("Order placed successfully.");
 });
-
+ 
+ app.MapPost("/login", async (LoginRequest login) =>
+ {
+     Console.WriteLine($"Prøvd å logge inn bruker: {login.UserName} med passord: {login.PassWord}");
+     var sql = "SELECT * FROM Users WHERE UserName = @UserName AND PassWord = @Password";
+     var conn = new SqlConnection(connStr);
+     var result = await conn.QuerySingleOrDefaultAsync<Person>(sql, new { UserName = login.UserName, PassWord = login.PassWord });
+     if (result != null)
+     {
+         return Results.Ok(result);
+     }
+     else
+     {
+         return Results.NotFound("User not found");
+     }
+ });
 
 //delete
  app.MapDelete("/cart", async ([FromBody] CartItem cartItem) =>
